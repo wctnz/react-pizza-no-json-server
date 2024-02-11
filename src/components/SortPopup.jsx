@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setSortBy } from "../redux/actions/filters";
 
-const SortPopup = ({ items }) => {
+const SortPopup = ({ activeSortType, items }) => {
   const [visiblePopup, setVisiblePopup] = useState(false);
-  const [activeItem, setActiveItem] = useState("популярности");
   const refSpan = useRef();
+  const dispatch = useDispatch();
+  const activeLabel = items.find((obj) => obj.type === activeSortType).name;
 
   const clicOutsideHandler = (event) => {
-    // console.log("refSpan", refSpan.current);
-    console.log("click", event.target.offsetParent);
     if (event.target.offsetParent !== refSpan.current) {
-      console.log("hello");
       setVisiblePopup(false);
     }
   };
@@ -39,7 +39,7 @@ const SortPopup = ({ items }) => {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={toogleVisiblePopup}>{activeItem}</span>
+        <span onClick={toogleVisiblePopup}>{ activeLabel }</span>
       </div>
       {visiblePopup && (
         <div className="sort__popup">
@@ -47,8 +47,8 @@ const SortPopup = ({ items }) => {
             {items &&
               items.map((obj, index) => (
                 <li
-                  className={activeItem === obj.name ? "active" : ""}
-                  onClick={() => setActiveItem(obj.name)}
+                  className={activeSortType === obj.type ? "active" : ""}
+                  onClick={() => dispatch(setSortBy(obj.type))}
                   key={`${obj.name}_${index}`}
                 >
                   {obj.name}

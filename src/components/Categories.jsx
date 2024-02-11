@@ -1,26 +1,33 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setCategory } from "../redux/actions/filters";
 
-const Categories = ({ items }) => {
-  const [activeItem, setActiveItem] = useState(null);
+const Categories = ({ activeCategory, items }) => {
+  const dispatch = useDispatch();
+
+  const handlePizzatypeClick = (index) => {
+    dispatch(setCategory(index))
+  };
 
   return (
     <div className="categories">
       <ul>
         <li
-          className={activeItem === null ? "active" : ""}
-          onClick={() => setActiveItem(null)}
+          className={activeCategory === null ? "active" : ""}
+          onClick={() => handlePizzatypeClick(null)}
         >
           Все
         </li>
-        { items &&  items.map((name, index) => (
-          <li
-            className={activeItem === name ? "active" : ""}
-            onClick={() => setActiveItem(name)}
-            key={`${name}_${index}`}
-          >
-            {name}
-          </li>
-        ))}
+        {items &&
+          items.map((name, index) => (
+            <li
+              className={activeCategory === index ? "active" : ""}
+              onClick={() => handlePizzatypeClick(index)}
+              key={`${name}_${index}`}
+            >
+              {name}
+            </li>
+          ))}
       </ul>
     </div>
   );

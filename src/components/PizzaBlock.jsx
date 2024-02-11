@@ -1,18 +1,40 @@
 import classNames from "classnames";
 import React, { useState } from "react";
+import Button from "./Button";
 
-const PizzaBlock = ({ name, imageUrl, price, types, sizes }) => {
+const PizzaBlock = ({
+  id,
+  name,
+  imageUrl,
+  price,
+  types,
+  sizes,
+  onClickAddPizza,
+  addedCount
+}) => {
   const typeNames = ["тонкое", "традиционное"];
   const sizeNames = [26, 30, 40];
   const [activeType, setActiveType] = useState(types[0]);
-  const [activeSize, setActiveSize] = useState(sizes[0]);
+  const [activeSize, setActiveSize] = useState(0);
 
   const handleTypeClick = (index) => {
     setActiveType(index);
   };
-  
-  const handleSyzeClick = (size) => {
-    setActiveSize(size);
+
+  const handleSizeClick = (index) => {
+    setActiveSize(index);
+  };
+
+  const onAddPizza = () => {
+    const obj = {
+      id,
+      name,
+      imageUrl,
+      price,
+      size: sizeNames[activeSize],
+      type: typeNames[activeType],
+    };
+    onClickAddPizza(obj);
   };
 
   return (
@@ -26,7 +48,7 @@ const PizzaBlock = ({ name, imageUrl, price, types, sizes }) => {
               onClick={() => handleTypeClick(index)}
               className={classNames({
                 active: activeType === index,
-                disabled: !types.includes(index)
+                disabled: !types.includes(index),
               })}
               key={`${type}_${index}`}
             >
@@ -35,12 +57,12 @@ const PizzaBlock = ({ name, imageUrl, price, types, sizes }) => {
           ))}
         </ul>
         <ul>
-        {sizeNames.map((size, index) => (
+          {sizeNames.map((size, index) => (
             <li
-              onClick={() => handleSyzeClick(size)}
+              onClick={() => handleSizeClick(index)}
               className={classNames({
-                active: activeSize === size,
-                disabled: !sizes.includes(size)
+                active: activeSize === index,
+                disabled: !sizes.includes(size),
               })}
               key={`${size}_${index}`}
             >
@@ -51,7 +73,7 @@ const PizzaBlock = ({ name, imageUrl, price, types, sizes }) => {
       </div>
       <div className="pizza-block__bottom">
         <div className="pizza-block__price">от {price} ₽</div>
-        <div className="button button--outline button--add">
+        <Button onClick={onAddPizza} className="button--add" outline>
           <svg
             width="12"
             height="12"
@@ -65,8 +87,8 @@ const PizzaBlock = ({ name, imageUrl, price, types, sizes }) => {
             />
           </svg>
           <span>Добавить</span>
-          <i>2</i>
-        </div>
+          { addedCount && <i>{ addedCount }</i> }
+        </Button>
       </div>
     </div>
   );
