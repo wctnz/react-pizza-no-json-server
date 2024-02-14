@@ -18,6 +18,8 @@ const Home = () => {
     dispatch(addPizzaToCart(obj));
   };
 
+console.log("items", items)
+
   return (
     <div className="container">
       <div className="content__top">
@@ -29,7 +31,7 @@ const Home = () => {
         <SortPopup
           activeSortType={sortBy}
           items={[
-            { name: "популярности", type: "popular" },
+            { name: "популярности", type: "rating" },
             { name: "цене", type: "price" },
             { name: "алфавиту", type: "name" },
           ]}
