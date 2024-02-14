@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Categories, PizzaBlock, SortPopup } from "../components";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPizzas } from "../redux/actions/pizzas";
+import { setPizzas } from "../redux/actions/pizzas";
 import { addPizzaToCart } from "../redux/actions/cart";
+import pizzasList from "../assets/db.json";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -10,15 +11,33 @@ const Home = () => {
   const cartItems = useSelector(({ cart }) => cart.items);
   const { category, sortBy } = useSelector(({ filters }) => filters);
 
+  const sortArr = (arr) => {
+    let res;
+    if (sortBy === "name") {
+      res = arr.sort((a, b) => a[sortBy].localeCompare(b[sortBy]));
+    } else {
+      res = arr.sort((a, b) => a[sortBy] - b[sortBy]);
+    }
+    return res;
+  };
+
+  console.log("category, sortBy", category, sortBy);
+
   useEffect(() => {
-    dispatch(fetchPizzas(category, sortBy));
+    dispatch(
+      setPizzas(
+        category === null
+          ? pizzasList.pizzas
+          : pizzasList.pizzas.filter((pizza) => pizza.category === category)
+      )
+    );
   }, [category, sortBy]);
 
   const handleAddPizzaToCard = (obj) => {
     dispatch(addPizzaToCart(obj));
   };
 
-console.log("items", items)
+  console.log("items", items);
 
   return (
     <div className="container">
@@ -40,11 +59,11 @@ console.log("items", items)
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">
         {items &&
-          items.map((item) => (
+          sortArr(items).map((item) => (
             <PizzaBlock
               onClickAddPizza={handleAddPizzaToCard}
               key={item.id}
-              addedCount={ cartItems[item.id] && cartItems[item.id].items.length  }
+              addedCount={cartItems[item.id] && cartItems[item.id].items.length}
               {...item}
             />
           ))}
